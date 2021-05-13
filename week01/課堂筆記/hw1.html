@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>第一週 - 從函式拆解認識設計模式</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <div class="row py-3">
+        <div class="col-sm-4">
+          <div class="card">
+            <div class="card-header">新增產品</div>
+            <div class="card-body">
+              <div class="form-group mb-2">
+                <label for="title">產品標題</label>
+                <input
+                  id="title"
+                  type="text"
+                  class="form-control"
+                  placeholder="請輸入產品標題"
+                />
+              </div>
+              <div class="row mb-2">
+                <div class="form-group col-md-6">
+                  <label for="origin_price">原價</label>
+                  <input
+                    id="origin_price"
+                    type="number"
+                    min="0"
+                    class="form-control"
+                    placeholder="請輸入原價"
+                  />
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="price">售價</label>
+                  <input
+                    id="price"
+                    v-model="tempProduct.price"
+                    min="0"
+                    type="number"
+                    class="form-control"
+                    placeholder="請輸入售價"
+                  />
+                </div>
+              </div>
+              <div class="d-flex justify-content-end">
+                <button class="btn btn-primary align-self-end" id="addProduct">
+                  建立
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button type="button" id="clearAll" class="btn btn-sm btn-danger">
+        清除全部
+      </button>
+      <table class="table mt-4">
+        <thead>
+          <tr>
+            <th>產品名稱</th>
+            <th width="120">原價</th>
+            <th width="120">售價</th>
+            <th width="150">是否啟用</th>
+            <th width="120">刪除</th>
+          </tr>
+        </thead>
+        <tbody id="productList"></tbody>
+      </table>
+      <p>目前有 <span id="productCount">0</span> 項產品</p>
+      <p>共 <span id="productSum">0</span> 元</p>
+    </div>
+  </body>
+  <script>
+    const data = [
+      {
+        productTitle: "產品一",
+        productOriginPrice: 12,
+        productCurrentPrice: 12,
+        is_enabled: true,
+      },
+    ];
+    renderData();
+
+    function renderData() {
+      var tbody = document.querySelector("#productList");
+      var productList = "";
+      data.forEach((item, index) => {
+        productList += `<tr>
+                <td>${index + 1}.  ${item.productTitle}</td>
+                <td width="120">${item.productOriginPrice}</td>
+                <td width="120">${item.productCurrentPrice}</td>
+                <td width="100">
+                    <div class="form-check form-switch">
+          <input class="form-check-input enableSwitch" type="checkbox" data-id="${index}" ${
+          item.is_enabled ? "checked" : ""
+        } data-action="status" data-id="${index}">
+          <label class="form-check-label" for="${index}">${
+          item.is_enabled ? "啟用" : "未啟用"
+        }</label>
+        </div>
+                        </div>
+                    </td>
+                    <td width="120"><button type="button" class="btn btn-sm btn-danger move remove" data-action="remove" data-id="${index}"> 刪除 </button></td>
+                </tr>`;
+      });
+      tbody.innerHTML = productList;
+      const btnsRemove = document.querySelectorAll(".remove");
+      btnsRemove.forEach((btn) => btn.addEventListener("click", remove));
+      const enableSwitchs = document.querySelectorAll(".enableSwitch");
+      enableSwitchs.forEach((checkbox) =>
+        checkbox.addEventListener("change", changeEnable)
+      );
+      const addButton = document.querySelector("#addProduct");
+      addButton.addEventListener("click", add);
+      var clearAllButton = document.querySelector("#clearAll");
+      clearAllButton.addEventListener("click", clearData);
+      var productCount = document.querySelector("#productCount");
+      productCount.innerHTML = data.length;
+      var productSum = document.querySelector("#productSum");
+      productSum.innerHTML = getProductSum();
+    }
+    // 添加商品
+    function add() {
+      let productTitle = document.querySelector("#title").value;
+      let productOriginPrice = document.querySelector("#origin_price").value;
+      let productCurrentPrice = document.querySelector("#price").value;
+      if (
+        productTitle == "" ||
+        productOriginPrice == "" ||
+        productCurrentPrice == ""
+      ) {
+        alert("請輸入正確資料");
+        return;
+      }
+      data.push({
+        productTitle: productTitle,
+        productOriginPrice: productOriginPrice,
+        productCurrentPrice: productCurrentPrice,
+        is_enabled: true,
+      });
+      renderData();
+    }
+    // 移除商品
+    function remove(e) {
+      var id = e.target.dataset.id;
+      data.splice(id, 1);
+      renderData();
+    }
+
+    // 是否啟用商品
+    function changeEnable(e) {
+      var id = e.target.dataset.id;
+      data[id].is_enabled = !data[id].is_enabled;
+      renderData();
+      // data[id]
+    }
+
+    // 清除商品
+    function clearData() {
+      data.length = 0;
+      renderData();
+    }
+    // 計算總價
+    function getProductSum() {
+      var sum = 0;
+      data.forEach((item) => {
+        sum += parseInt(item.productCurrentPrice);
+      });
+      return sum;
+    }
+  </script>
+</html>
