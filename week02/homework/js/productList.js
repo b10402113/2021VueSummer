@@ -18,7 +18,8 @@ const app = {
     verifyToken(cookie) {
         const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
         if (!token) {
-            alert('請您先進行登入')
+            alert('請您先進行登入');
+            window.location = 'login.html';
         }
         axios.defaults.headers.common.Authorization = token;
     },

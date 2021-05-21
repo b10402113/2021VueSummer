@@ -15,7 +15,7 @@ btn.addEventListener('click', function () {
         }
         const { expired, token } = res.data;
         document.cookie = `hexToken=${token};expires=${new Date(expired)}; path=/`;
-        
+        window.location = 'productList.html';
 
     }).catch(err => {
         alert('系統出錯了')
