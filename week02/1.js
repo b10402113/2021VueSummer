@@ -1,7 +1,5 @@
-axios.get('https://randomuser.me/api').then(res=>{
-    const seed = res.data.info.seed;
-    console.log(res, seed);
-    return axios.get('https://randomuser.me/api?seed='+seed).then(res=>{
-        console.log(res);
-    })
-})
+var a = {
+    a:10
+};
+var b = a.a=a.a*a.a;
+console.log(b);
